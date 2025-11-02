@@ -1,24 +1,40 @@
 package org.emp.gl.core.launcher;
 
-import org.emp.gl.clients.Horloge ;
+import java.util.Random;
+import javax.swing.SwingUtilities;
+
+import org.emp.gl.clients.CompteARebours;
+import org.emp.gl.clients.Horloge;
+import org.emp.gl.clients.HorlogeGraphique;
+import org.emp.gl.time.service.impl.DummyTimeServiceImpl;
+import org.emp.gl.timer.service.TimerService;
 
 /**
- * Hello world!
- *
+ * Main Application.
  */
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        TimerService timerService = new DummyTimeServiceImpl();
 
-        testDuTimeService();
-    }
+        // Horloges console
+        new Horloge("Console-1", timerService);
+        new Horloge("Console-2", timerService);
 
-    private static void testDuTimeService() {
-        Horloge horloge = new Horloge("Num 1") ;
-    }
+        // Horloge graphique (Swing)
+        SwingUtilities.invokeLater(() -> new HorlogeGraphique("Horloge Graphique", timerService));
 
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        // Compte à rebours
+        new CompteARebours("Cpt5", 5, timerService);
+
+        Random rnd = new Random();
+        for (int i = 0; i < 5; i++) {
+            int val = 10 + rnd.nextInt(11);
+            new CompteARebours("Cpt" + (i + 1), val, timerService);
+        }
+
+        // Laisse le programme tourner un moment
+        Thread.sleep(40000);
+        System.out.println("Fin du programme.");
     }
 }
